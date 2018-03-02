@@ -1511,7 +1511,7 @@ class Package:
         print('Transmitting file data', end=' ')
         filelist = self.__generate_commitlist(todo_send)
         sfilelist = self.__send_commitlog(msg, filelist, validate=True)
-        hash_entries = [e for e in sfilelist.findall('entry') if e.get('hash') is not None] 
+        hash_entries = [e for e in sfilelist.findall('entry') if e.get('hash') is not None]
         if sfilelist.get('error') and hash_entries:
             name2elem = dict([(e.get('name'), e) for e in filelist.findall('entry')])
             for entry in hash_entries:
@@ -1969,7 +1969,7 @@ class Package:
                 diff.append('--- %s\t(revision %s)\n' % (fname, revision or self.rev))
                 diff.append('+++ %s\t(working copy)\n' % fname)
                 fname = os.path.join(self.storedir, fname)
-               
+
             try:
                 if revision is not None and not add:
                     (fd, tmpfile) = tempfile.mkstemp(prefix='osc_diff')
@@ -2973,7 +2973,7 @@ class Request:
             lines.append('    *** This request will get automatically accepted after '+self.accept_at+' ! ***\n')
         if self.priority in [ 'critical', 'important' ] and self.state.name in [ 'new', 'review' ]:
             lines.append('    *** This request has classified as '+self.priority+' ! ***\n')
-            
+
         for action in self.actions:
             tmpl = '  %(type)-13s %(source)s %(target)s'
             if action.type == 'delete':
@@ -4577,7 +4577,7 @@ def get_user_data(apiurl, user, *tags):
     """get specified tags from the user meta"""
     meta = get_user_meta(apiurl, user)
     return _get_xml_data(meta, *tags)
-    
+
 
 def get_group_data(apiurl, group, *tags):
     meta = get_group_meta(apiurl, group)
@@ -5586,7 +5586,7 @@ class Repo:
 
 def get_repos_of_project(apiurl, prj):
     f = show_project_meta(apiurl, prj)
-    root = ET.fromstring(''.join(f))
+    root = ET.fromstring(b''.join(f))
 
     for node in root.findall('repository'):
         for node2 in node.findall('arch'):
@@ -5783,11 +5783,11 @@ def get_package_results(apiurl, project, package, wait=False, *args, **kwargs):
                 if pkg is not None and pkg.get('code') in waiting_states:
                     waiting = True
                     break
-                
+
         if not wait or not waiting:
             break
         else:
-            yield xml 
+            yield xml
     yield xml
 
 
@@ -6052,7 +6052,10 @@ def print_buildlog(apiurl, prj, package, repository, arch, offset=0, strip_time=
 
     # to protect us against control characters
     import string
-    all_bytes = string.maketrans('', '')
+    if sys.version_info >= (3, 0):
+        all_bytes = bytes.maketrans(b'', b'')
+    else:
+        all_bytes = string.maketrans(b'', b'')
     remove_bytes = all_bytes[:8] + all_bytes[14:32] # accept tabs and newlines
 
     query = {'nostream' : '1', 'start' : '%s' % offset}
@@ -6066,7 +6069,9 @@ def print_buildlog(apiurl, prj, package, repository, arch, offset=0, strip_time=
         try:
             for data in streamfile(u, bufsize="line"):
                 offset += len(data)
-                print_data(data, strip_time)
+                if strip_time:
+                    data = buildlog_strip_time(data)
+                sys.stdout.write(data.translate(all_bytes, remove_bytes).decode('utf-8'))
         except IncompleteRead as e:
             if retry_count >= 3:
                 raise e
