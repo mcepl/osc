@@ -754,7 +754,7 @@ class Osc(cmdln.Cmdln):
                 buf = f.read(16384)
                 if not buf:
                     break
-                sys.stdout.write(buf)
+                sys.stdout.write(buf.decode('utf-8'))
 
         elif opts.delete:
             print("Delete token")
@@ -774,7 +774,7 @@ class Osc(cmdln.Cmdln):
                 raise oscerr.WrongArgs("Did you mean --" + args[0] + "?")
             # just list token
             for data in streamfile(url, http_GET):
-                sys.stdout.write(data)
+                sys.stdout.write(data.decode('utf-8'))
 
 
     @cmdln.option('-a', '--attribute', metavar='ATTRIBUTE',
@@ -7681,8 +7681,9 @@ Please submit there instead, or use --nodevelproject to force direct submission.
                 continue
             # construct a sorted, flat list
             # Sort by first column, follwed by second column if we have two columns, else sort by first.
-            results.sort(lambda x, y: ( cmp(x[0], y[0]) or
-                                       (len(x)>1 and len(y)>1 and cmp(x[1], y[1])) ))
+            # results.sort(lambda x, y: ( cmp(x[0], y[0]) or
+            #                           (len(x)>1 and len(y)>1 and cmp(x[1], y[1])) ))
+            results.sort(key=cmp_to_key(compare))
             new = []
             for i in results:
                 new.extend(i)
@@ -8730,7 +8731,7 @@ Please submit there instead, or use --nodevelproject to force direct submission.
             buf = f.read(16384)
             if not buf:
                 break
-            sys.stdout.write(buf)
+            sys.stdout.write(buf.decode('utf-8'))
 
     @cmdln.option('-m', '--message',
                   help='add MESSAGE to changes (do not open an editor)')
