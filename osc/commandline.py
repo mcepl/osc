@@ -5301,7 +5301,7 @@ Please submit there instead, or use --nodevelproject to force direct submission.
         else:
             raise oscerr.WrongArgs('please provide project package repository arch.')
 
-        print(get_rpmlint_log(apiurl, project, package, repository, arch))
+        print(get_rpmlint_log(apiurl, project, package, repository, arch).decode('utf-8'))
 
     @cmdln.alias('bl')
     @cmdln.alias('blt')
