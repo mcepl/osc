@@ -2117,7 +2117,7 @@ rev: %s
             argument force supress the confirm question
         """
 
-        m = ''.join(show_package_meta(self.apiurl, self.prjname, self.name))
+        m = b''.join(show_package_meta(self.apiurl, self.prjname, self.name))
 
         root = ET.fromstring(m)
         root.find('title').text = self.summary
@@ -2132,7 +2132,7 @@ rev: %s
 
         if not force:
             print('*' * 36, 'old', '*' * 36)
-            print(m)
+            print(m.decode('utf-8'))
             print('*' * 36, 'new', '*' * 36)
             print(ET.tostring(root, encoding=ET_ENCODING))
             print('*' * 72)
