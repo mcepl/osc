@@ -60,8 +60,8 @@ class build_docs(distutils.core.Command):
         src_dir = (self.distribution.package_dir or {'': ''})['']
         src_dir = os.path.join(os.getcwd(),  src_dir)
         import sphinx
-        sphinx.main(['runme', 
-                    '-D', 'version=%s' % metadata.get_version(), 
+        sphinx.main(['runme',
+                    '-D', 'version=%s' % metadata.get_version(),
                     os.path.join('docs',), os.path.join(self.built_docs, 'docs')])
 
 
@@ -89,7 +89,7 @@ class install_data(distutils.command.install_data.install_data, object):
 
 addparams = {}
 if HAVE_PY2EXE:
-    addparams['console'] = [{'script': 'osc-wrapper.py', 'dest_base': 'osc', 'icon_resources': [(1, 'osc.ico')]}]
+    addparams['console'] = [{'script': 'osc-py3-wrapper.py', 'dest_base': 'osc', 'icon_resources': [(1, 'osc.ico')]}]
     addparams['zipfile'] = 'shared.lib'
     addparams['options'] = {'py2exe': {'optimize': 0, 'compressed': True, 'packages': ['xml.etree', 'StringIO', 'gzip']}}
 
