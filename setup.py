@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
 import distutils.core
 from distutils.command import build, install_data
 import os.path
